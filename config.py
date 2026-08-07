@@ -5,30 +5,24 @@ Central configuration for the Autonomous Data Analyst Agent.
 """
 
 from dotenv import load_dotenv
-
 import os
 
+import openai
 from sqlalchemy import create_engine
-
 from sqlalchemy.orm import sessionmaker
-
-from langchain_nvidia_ai_endpoints import ChatNVIDIA
-
 
 load_dotenv()
 
+OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+OPENAI_MODEL = os.getenv("OPENAI_MODEL", "gpt-3.5-turbo")
 
-NVIDIA_API_KEY = os.getenv("NVIDIA_API_KEY")
+if OPENAI_API_KEY:
+    openai.api_key = OPENAI_API_KEY
 
-DATABASE_URL = os.getenv("DATABASE_URL")
-
-
-if NVIDIA_API_KEY is None:
-    raise RuntimeError("NVIDIA_API_KEY not found in .env")
-
-if DATABASE_URL is None:
-    raise RuntimeError("DATABASE_URL not found in .env")
-
+DATABASE_URL = os.getenv(
+    "DATABASE_URL",
+    "postgresql+psycopg2://postgres:postgres@localhost:5432/salesdb",
+)
 
 engine = create_engine(
     DATABASE_URL,
@@ -38,16 +32,9 @@ engine = create_engine(
     future=True,
 )
 
-
 SessionLocal = sessionmaker(
     bind=engine,
     autoflush=False,
     autocommit=False,
-)
-
-
-llm = ChatNVIDIA(
-    model="nvidia/llama-3.1-nemotron-70b-instruct",
-    api_key=NVIDIA_API_KEY,
-    temperature=0,
+    future=True,
 )
