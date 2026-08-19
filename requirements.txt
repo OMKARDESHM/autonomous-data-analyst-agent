@@ -8,3 +8,8 @@ python-dotenv
 sqlparse
 PyJWT>=2.8
 openai
+langgraph>=0.2
+langchain>=0.2
+langchain-core>=0.2
+langchain-openai>=0.1
+langchain-nvidia-ai-endpoints>=0.1
